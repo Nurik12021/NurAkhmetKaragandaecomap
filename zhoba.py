@@ -9,256 +9,321 @@ import plotly.express as px
 # 1. БЕТТІ БАПТАУ
 # ---------------------------------------------------------------------
 st.set_page_config(
-    page_title="Қарағанды | Экологиялық қауіп-қатерлер картасы",
+    page_title="Қарағанды | Дәлелденген ластану нысандары",
     page_icon="🌍",
     layout="wide",
 )
 
-KARAGANDY_CENTER = [49.90, 73.00]
+MAP_CENTER = [49.90, 73.00]
 START_ZOOM = 9
 
 # ---------------------------------------------------------------------
-# 2. ДЕРЕКТЕР БАЗАСЫ — 15 нысан (5 ауа, 5 су, 5 шу)
-# Барлық мәндер: Қазгидромет РМК филиалы (Қарағанды және Ұлытау облыстары),
-# "Қоршаған ортаның жай-күйі туралы ақпараттық бюллетень", 2026 жылғы ақпан.
+# 2. ДЕРЕКТЕР БАЗАСЫ — 15 нысан, әрқайсысының дереккөзімен
 # ---------------------------------------------------------------------
-SRC = "Қазгидромет, Қарағанды және Ұлытау обл. бюллетені, 2026 ақпан (kazhydromet.kz)"
-APPROX = "Координата шамамен (елді мекен/нысан бойынша). Дәл створ координатасын Қазгидромет паспортынан алыңыз."
-NO_NOISE = "Ресми шу өлшемі жарияланбаған. Өз өлшемдеріңізді сол жақ панельге енгізіңіз."
+# Дәлел деңгейі:
+#  A = рецензияланған мақала / ресми құжат / халықаралық ұйым есебі (нысанға тікелей)
+#  B = халықаралық дерекқор / энциклопедия (орны мен сипаты расталған)
+#  C = сектор деңгейіндегі дерек (нысанның өзі бойынша жеке өлшеу жоқ)
+#
+# Қауіп деңгейі (ашық өлшемдер):
+#  Жоғары  = өлшенген шектен асу немесе ресми құжатта басым үлес көрсетілген
+#  Орташа  = ластау көзі расталған, бірақ сандық асу көрсетілмеген / қауіп бар
+#  Төмен   = ластаушы заттардың іздері анықталған, шектен асу көрсетілмеген
 
-# ---- АУА: деңгей бюллетеньнің өз шкаласы бойынша (СИ, НП) ----
-air = [
-    {"name": "Қарағанды, ҚБП №8 (Зелинский к-сі, 23, Пришахтинск)", "area": "Қарағанды қ.",
-     "lat": 49.8987, "lon": 73.0820, "risk_type": "Ауа", "risk_level": "Жоғары",
-     "description": "PM2.5: бір реттік макс. 24,4 ШРК, орташа тәуліктік 11,3 ШРК; "
-                    "ақпанда 50 жоғары ластану жағдайы. Қала бойынша СИ=24,4, НП=100% (өте жоғары).",
-     "source": SRC, "coord_note": "Пост мекенжайы бойынша (Google Places)."},
-    {"name": "Теміртау, ҚБП №2 (Фурманов к-сі, 5)", "area": "Теміртау",
-     "lat": 50.0522, "lon": 72.9932, "risk_type": "Ауа", "risk_level": "Орташа",
-     "description": "Күкіртті сутек: СИ=4,2 (жоғарылаған деңгей), 36 жағдайда ШРК асты. "
-                    "Теміртау бойынша жалпы деңгей жоғары (фенол, НП=32%, №4 пост).",
-     "source": SRC, "coord_note": "Пост мекенжайы бойынша (Google Places)."},
-    {"name": "Абай қаласы, ҚБП (Абай к-сі, 26)", "area": "Абай",
-     "lat": 49.6335, "lon": 72.8547, "risk_type": "Ауа", "risk_level": "Жоғары",
-     "description": "Азот диоксиді: орташа тәуліктік 5,61 ШРК, бір реттік 1,48 ШРК; "
-                    "1751 жағдайда ШРК асты; НП=87% (өте жоғары).",
-     "source": SRC, "coord_note": "Пост мекенжайы бойынша (Google Places)."},
-    {"name": "Сарань, ҚБП (Саранская к-сі, 28а, орталық аурухана)", "area": "Сарань",
-     "lat": 49.8036, "lon": 72.8247, "risk_type": "Ауа", "risk_level": "Төмен",
-     "description": "Көміртек оксиді: СИ=0,6, НП=0% (төмен деңгей). Тек CO өлшенеді. "
-                    "Салыстыру үшін таза нүкте ретінде алынған.",
-     "source": SRC, "coord_note": "Пост мекенжайы бойынша (Google Places)."},
-    {"name": "Сортировка (жылжымалы лаборатория, Бородин/Серов қиылысы)", "area": "Қарағанды қ.",
-     "lat": 49.9667, "lon": 73.2212, "risk_type": "Ауа", "risk_level": "Төмен",
-     "description": "Эпизодтік өлшем: барлық заттар нормада. Тұрақты пост емес, бір реттік өлшем.",
-     "source": SRC, "coord_note": APPROX},
+EEAS = {"t": "EEAS/ESA (2023): Air pollution in Karaganda Region as seen from space",
+        "u": "https://www.eeas.europa.eu/sites/default/files/documents/2023/KZ-Air-Pollution-from-Space-EN_WEB.pdf"}
+BURT = {"t": "Буртовая Е.В., Баранова Е.И. (2024): Анализ экологического состояния г. Караганды (Гео-Сибирь)",
+        "u": "https://geosib.sgugit.ru/upload/geosibir/sborniki/2024/tom-4-2/158-163.pdf"}
+
+eco_data = [
+    # ------------------------- АУА -------------------------
+    {"name": "Qarmet (бұр. ArcelorMittal Temirtau) металлургия комбинаты", "area": "Теміртау",
+     "lat": 50.031766, "lon": 72.994863, "risk_type": "Ауа", "risk_level": "Жоғары", "evidence": "A",
+     "description": "2020 ж. Теміртаудағы шығарындының 242 мың тоннасының 89%-ы осы кәсіпорынға тиесілі. 2018 ж. қаңтарда қала үстіне қара қар жауды. ESA спутник деректері бойынша Теміртауда NO₂ деңгейі ұқсас қалалардан 2–3 есе жоғары.",
+     "coord_note": "GEM Global Iron and Steel Tracker (нақты координата)",
+     "sources": [
+         {"t": "Қазақстан Үкіметі (ресми): 2020 ж. шығарындылар, Теміртау — АМТ үлесі 89%",
+          "u": "https://primeminister.kz/en/news/2021-zhylgy-mausym-ayynda-utilizaciyalyk-alymga-noldik-molsherleme-engizildi-m-myrzagaliev-155917"},
+         EEAS,
+         {"t": "Arnika: Polluted air in Temirtau", "u": "https://arnika.org/en/hotspots/kazakhstan/polluted-air-in-temirtau"},
+         {"t": "Wikipedia: Qarmet", "u": "https://en.wikipedia.org/wiki/Qarmet"},
+         {"t": "GEM: Qarmet steel plant (координата)", "u": "https://www.gem.wiki/Qarmet_steel_plant"},
+     ]},
+    {"name": "Қарағанды ЖЭО-3 (ТЭЦ-3) және күл үйіндісі", "area": "Қарағанды қаласы",
+     "lat": 49.916732, "lon": 73.237172, "risk_type": "Ауа", "risk_level": "Жоғары", "evidence": "A",
+     "description": "Қаладағы ең ірі көмірмен жұмыс істейтін электр станциясы. 2021 ж. көмір шаңының рұқсат етілген деңгейінен асқаны үшін 1,7 млн теңге айыппұл салынған. Қар түсірілімі зерттеуі стансадан таралған жанбаған көмір мен күл бөлшектерін анықтады; станса маңы топырағында қорғасын 1,1 ШРК.",
+     "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
+     "sources": [
+         {"t": "GEM: Karaganda-3 power station", "u": "https://www.gem.wiki/Karaganda-3_power_station"},
+         {"t": "Adil'bayeva T.E. et al. (2016), IOP Conf. Ser.: Earth Environ. Sci. — қар түсірілімі, Қарағанды ЖЭО",
+          "u": "https://earchive.tpu.ru/handle/11683/35148?locale=en"},
+         BURT,
+     ]},
+    {"name": "Қарағанды ЖЭО-2 (Qarmet ТЭЦ-2)", "area": "Теміртау",
+     "lat": 50.04667, "lon": 73.053235, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "B",
+     "description": "Qarmet-тің өз қажетіне арналған көмірмен жұмыс істейтін жылу электр орталығы (≥435 МВт), Global Coal Plant Tracker тізімінде.",
+     "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Karaganda-2 power station", "u": "https://www.gem.wiki/Karaganda-2_power_station"}]},
+    {"name": "Қарағанды ГРЭС-1 (Теміртау)", "area": "Теміртау",
+     "lat": 50.089267, "lon": 72.918005, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "B",
+     "description": "1942 жылдан жұмыс істейтін көмір станциясы (84 МВт). 2023 ж. мамырда тұрғындар күл үйіндісінен күл бұлттары таралатынына шағымданды, мәселе бойынша тексеру жарияланды.",
+     "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Karaganda-1 power station", "u": "https://www.gem.wiki/Karaganda-1_power_station"}]},
+    {"name": "Топар ГРЭС-2 (Қарағанды ГРЭС-2)", "area": "Қарағанды облысы",
+     "lat": 49.51333, "lon": 72.79861, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "B",
+     "description": "Көмірмен жұмыс істейтін ірі станса (мың МВт-қа жуық). GEM күл үйіндісінен шаң көтерілуі туралы хабарламалар мен бейнематериалдар бар екенін көрсетеді.",
+     "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Topar power station", "u": "https://www.gem.wiki/Topar_power_station"}]},
+    {"name": "Костенко шахтасы", "area": "Қарағанды қаласы",
+     "lat": 49.859567, "lon": 73.113928, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "description": "Қарағанды қаласы шегіндегі жерасты көмір шахтасы. EEAS/ESA есебі: жерасты көмір өндіру ашық тәсілден гөрі көбірек метан (CH₄) бөледі; Қарағанды — шахталық ластану басым өңірлердің бірі.",
+     "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Kostenko Coal Mine", "u": "https://www.gem.wiki/Kostenko_Coal_Mine"}, EEAS]},
+    {"name": "Кузембаев шахтасы", "area": "Қарағанды облысы",
+     "lat": 49.805879, "lon": 72.966106, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "description": "Жерасты көмір шахтасы, шығыс бөлігі Қарағанды қаласымен шектеседі. Метан шығарындысының секторлық көзі (EEAS/ESA).",
+     "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Kuzembaev Coal Mine", "u": "https://www.gem.wiki/Kuzembaev_Coal_Mine"}, EEAS]},
+    {"name": "Саран шахтасы", "area": "Қарағанды облысы",
+     "lat": 49.773061, "lon": 72.895188, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "description": "Қарағанды қаласынан шамамен 12 км қашықтықтағы жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
+     "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Saranskaya Coal Mine", "u": "https://www.gem.wiki/Saranskaya_Coal_Mine"}, EEAS]},
+    {"name": "Абай шахтасы", "area": "Қарағанды облысы",
+     "lat": 49.68629, "lon": 72.75919, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "description": "2021 ж. қарашада метан жарылысы болған жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
+     "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Abayskaya Coal Mine", "u": "https://www.gem.wiki/Abayskaya_coal_mine"}, EEAS]},
+    {"name": "Ленин атындағы шахта (Шахтинск)", "area": "Қарағанды облысы",
+     "lat": 49.725506, "lon": 72.521954, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "description": "2006 және 2022 жж. метан жарылыстары болған жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
+     "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Lenin (Kazakhstan) Coal Mine", "u": "https://www.gem.wiki/V._I._Lenin_(Kazakhstan)_Coal_Mine"}, EEAS]},
+    {"name": "Шахтинская шахтасы (Шахтинск)", "area": "Қарағанды облысы",
+     "lat": 49.764274, "lon": 72.617826, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "description": "Қарағанды көмір бассейнінің жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
+     "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
+     "sources": [{"t": "GEM: Shakhtinskaya Coal Mine", "u": "https://www.gem.wiki/Shakhtinskaya_Coal_Mine"}, EEAS]},
+
+    # ------------------------- СУ -------------------------
+    {"name": "Нұра өзені — Теміртау учаскесі (сынап, «Карбид» зауыты)", "area": "Теміртау",
+     "lat": 50.10472, "lon": 72.91889, "risk_type": "Су", "risk_level": "Жоғары", "evidence": "A",
+     "description": "1972 жылдан «Карбид» ацетальдегид зауыты өзенге сынап төкті (1997 ж. жабылды). Зерттеулерде өзен суындағы еритін сынап ШРК-дан 20 есе, Теміртау топырағында 30 есе асқан. Теміртау–Интумак аралығындағы шөгінділерде ~9,4 т сынап бағаланған; жоғарғы 25 км-де орташа 150–240 мг/кг. Дүниежүзілік банк жобасы (2011 ж. аяқталды) ластанған топырақты жойды; Arnika 2013–2014 жж. қалдық ластануды зерттеген.",
+     "coord_note": "Анықтамалық нүкте: Самарқан бөгені бөгеті, Нұра өзенінің Теміртау тұсы (Wikipedia). Ластанған учаске осы жерден төменге қарай ~25 км.",
+     "sources": [
+         {"t": "Wikipedia: Nura (river)", "u": "https://en.wikipedia.org/wiki/Nura_(river)"},
+         {"t": "Heaven S. et al. (2000), Univ. of Southampton: Mercury in the river Nura and its floodplain I",
+          "u": "https://eprints.soton.ac.uk/74706"},
+         {"t": "CORDIS (Еуропалық Комиссия): Mercury contamination, Karaganda region", "u": "https://cordis.europa.eu/project/id/IC15960110"},
+         {"t": "Bretton Woods Project: Mercury rising — World Bank and the Nura clean-up",
+          "u": "https://www.brettonwoodsproject.org/2007/04/mercury-rising-the-world-bank-and-the-nura-river-clean-up/"},
+         {"t": "World Bank (2012): Eliminating Mercury's Invisible Threat in Kazakhstan",
+          "u": "https://www.worldbank.org/en/results/2012/04/30/eliminating-mercurys-invisible-threat-in-kazakhstan"},
+         {"t": "Arnika: Mercury contamination of Nura river", "u": "https://arnika.org/en/hotspots/kazakhstan/mercury-contamination-of-nura-river"},
+     ]},
+    {"name": "Сокыр өзені", "area": "Қарағанды облысы",
+     "lat": 49.88167, "lon": 72.56778, "risk_type": "Су", "risk_level": "Жоғары", "evidence": "A",
+     "description": "Қазгидромет деректері бойынша 2021–2022 жж. су сапасы «нормаланбайды (>5 класс)»: 2022 ж. жалпы темір 0,358 және марганец 0,187 мг/дм³. Өзен Қарағанды қаласының оңтүстік шетінен өтеді, суы ішуге жарамсыз.",
+     "coord_note": "Өзен сағасы (Шерубайнұрамен құятын жер), Wikipedia координатасы.",
+     "sources": [BURT, {"t": "Wikipedia: Sokyr", "u": "https://en.wikipedia.org/wiki/Sokyr"}]},
+    {"name": "Фёдоров су қоймасы және Кіші Бұқпа өзені (кәріз ағыны)", "area": "Қарағанды қаласы",
+     "lat": 49.7583, "lon": 73.0908, "risk_type": "Су", "risk_level": "Орташа", "evidence": "A",
+     "description": "Қаладағы кәріздің 70%-ын өткізетін коллекторда болған апат салдарынан тазартылмаған ағын сулар Кіші Бұқпаға құйылды, ал өзен Фёдоров су қоймасына барады. Санэпидемиологтар өзен суында кәріздің бар екенін зертханалық түрде растады; су қоймасына жетуі туралы нәтижелер бөлек тексерілуде.",
+     "coord_note": "Wikipedia (RuWiki): 49°45′30″ с.е., 73°05′27″ ш.б.",
+     "sources": [
+         BURT,
+         {"t": "NewTimes.kz: Қарағандыда кәріздің ағуы бір айдан бері табылмай жатыр (СЭС сынамалары)",
+          "u": "https://newtimes.kz/obshchestvo/165178-v-karagande-uzhe-mesyac-ne-mogut-najti-utechku-iz-kanalizacii"},
+         {"t": "Zakon.kz: №10 коллектордағы апат, Бұқпа және Фёдоров су қоймасына қауіп",
+          "u": "https://www.zakon.kz/obshestvo/6394114-udivitelnoe-yavlenie-v-karagande-na-vodokhranilishche-obosnovalas-staya-lebedey.html"},
+         {"t": "Wikipedia: Sokyr (су қоймасының сипаты)", "u": "https://en.wikipedia.org/wiki/Sokyr"},
+     ]},
+    {"name": "Ертіс–Қарағанды каналы (Нұра өзенімен қиылысу)", "area": "Қарағанды облысы",
+     "lat": 50.09056, "lon": 73.37778, "risk_type": "Су", "risk_level": "Төмен", "evidence": "A",
+     "description": "Қарағанды қаласының негізгі ауыз су көзі. Балық сынамаларында қорғасын (0,081 мг/кг дейін) барлық сынамада анықталған; шектен асу көрсетілмеген. Қазгидромет бойынша канал суы 2022 ж. 4-сыныптан 3-класқа жақсарды.",
+     "coord_note": "Wikipedia: канал мен Нұраның қиылысу нүктесі.",
+     "sources": [
+         {"t": "Adilbekov Zh. et al. (2025): Sanitary and environmental safety assessment of fish from reservoirs of Northern and Central Kazakhstan",
+          "u": "https://ojs.ksu.edu.kz/index.php/3i/article/view/1278"},
+         BURT,
+         {"t": "Wikipedia: Nura (river) — канал координатасы", "u": "https://en.wikipedia.org/wiki/Nura_(river)"},
+     ]},
 ]
 
-# ---- СУ: деңгей Бірыңғай жіктеме класы бойынша (5-6 жоғары, 4 орташа, ≤3 төмен) ----
-def water_level(cls):
-    return "Жоғары" if cls >= 5 else ("Орташа" if cls == 4 else "Төмен")
+df = pd.DataFrame(eco_data)
+assert len(df) == 15
 
-water_raw = [
-    ("Сокыр өзені, сағасы (Қаражар ауылы маңы)", "Нұра ауданы", 49.8670, 72.5776, 6,
-     "6 класс (жоғары ластанған): аммоний-ион 18,1 мг/дм³, нитрит 10,37, фосфат 5,21, хлорид 419. "
-     "Ақпанда 2 жоғары ластану жағдайы."),
-    ("Шерубайнұра өзені, сағасы (Асыл ауылынан 2 км төмен)", "Абай ауданы", 49.8861, 72.5753, 6,
-     "6 класс (жоғары ластанған): аммоний-ион 18,0 мг/дм³, нитрит 9,586, фосфат 5,009. "
-     "Ақпанда 4 жоғары ластану жағдайы."),
-    ("Нұра өзені, Теміртау (Qarmet пен ТЭМК бірлескен ағынынан 1 км төмен)", "Теміртау", 50.0518, 73.0145, 5,
-     "5 класс (өте ластанған): фосфат 1,559 мг/дм³, фондық кластан асады."),
-    ("Нұра өзені, Теміртау (бірлескен ағыннан 1 км жоғары)", "Теміртау", 50.0550, 72.9650, 3,
-     "3 класс (орташа ластанған): минерализация 1280 мг/дм³, сульфат 315 мг/дм³. "
-     "Ағыннан төмен 5 класқа дейін нашарлайды."),
-    ("Қ. Сәтбаев атындағы канал (Қарағанды қ., 156-көпір, Петровка ауылына)", "Қарағанды қ.", 50.0991, 73.5082, 4,
-     "4 класс (ластанған): қалқыма заттар 13,0 мг/дм³, фондық кластан асады."),
-]
-water = [
-    {"name": n, "area": a, "lat": la, "lon": lo, "risk_type": "Су",
-     "risk_level": water_level(c), "description": d, "source": SRC, "coord_note": APPROX}
-    for (n, a, la, lo, c, d) in water_raw
-]
+EVIDENCE_TEXT = {
+    "A": "A — рецензияланған мақала / ресми құжат / халықаралық есеп",
+    "B": "B — халықаралық дерекқор / энциклопедия",
+    "C": "C — сектор деңгейіндегі дерек",
+}
 
-# ---- ШУ: ресми өлшем жоқ, деңгей пайдаланушы енгізген дБА бойынша есептеледі ----
-noise_raw = [
-    ("Қарағанды-Пассажирская теміржол вокзалы (Ермеков к-сі, 27)", "Қарағанды қ.", 49.7926, 73.0937,
-     "Жолаушылар және жүк пойыздарының қозғалысы. " + NO_NOISE),
-    ("Қарағанды-Сұрыптау станциясы (20+ жол, вагон сұрыптау)", "Қарағанды қ.", 49.9667, 73.2212,
-     "Жүк вагондарын сұрыптау және маневр жұмыстары. " + NO_NOISE),
-    ("Бұқар Жырау даңғылы мен Абай к-сінің қиылысы (ҚБП №3 маңы)", "Қарағанды қ.", 49.8040, 73.0900,
-     "Қала орталығындағы тығыз көлік ағыны. " + NO_NOISE),
-    ("Ермеков к-сі, 116 (ҚБП №7 маңы)", "Қарағанды қ.", 49.7820, 73.0682,
-     "Көлік қозғалысы. " + NO_NOISE),
-    ("Сары-Арқа халықаралық әуежайы", "Қарағанды қ.", 49.6708, 73.3344,
-     "Әуе кемелерінің ұшуы мен қонуы. " + NO_NOISE),
-]
-
-NORM_DAY, NORM_NIGHT = 55, 45  # дБА, тұрғын аумақ. Нормативті санитарлық ережеден тексеріңіз.
+RISK_COLORS = {"Жоғары": "red", "Орташа": "orange", "Төмен": "green"}
+RISK_TYPE_ICONS = {"Ауа": "cloud", "Су": "tint"}
+RISK_LEVEL_BADGE = {"Жоғары": "#e74c3c", "Орташа": "#f39c12", "Төмен": "#27ae60"}
+RISK_COLOR_PLOTLY = {"Жоғары": "#e74c3c", "Орташа": "#f1c40f", "Төмен": "#27ae60"}
 
 # ---------------------------------------------------------------------
-# 3. SIDEBAR — ШУ ӨЛШЕМДЕРІН ЕНГІЗУ
+# 3. SIDEBAR
 # ---------------------------------------------------------------------
 st.sidebar.title("🗺️ Бақылау панелі")
+st.sidebar.markdown("---")
 
-with st.sidebar.expander("🔊 Шу өлшемдерін енгізу (дБА)", expanded=False):
-    st.caption(f"Норма: күндіз {NORM_DAY} дБА, түнде {NORM_NIGHT} дБА. "
-               "Өлшемді енгізгенде нысанның деңгейі автоматты есептеледі.")
-    noise_base = pd.DataFrame({
-        "Нысан": [r[0] for r in noise_raw],
-        "Күндіз": [None] * len(noise_raw),
-        "Түнде": [None] * len(noise_raw),
-    })
-    noise_edit = st.data_editor(
-        noise_base, hide_index=True, disabled=["Нысан"], key="noise_editor",
-        column_config={
-            "Күндіз": st.column_config.NumberColumn("Күндіз, дБА", min_value=20, max_value=140),
-            "Түнде": st.column_config.NumberColumn("Түнде, дБА", min_value=20, max_value=140),
-        },
-    )
-
-def noise_level(day, night):
-    excess = []
-    if pd.notna(day):
-        excess.append(day - NORM_DAY)
-    if pd.notna(night):
-        excess.append(night - NORM_NIGHT)
-    if not excess:
-        return "Өлшеу жоқ"
-    m = max(excess)
-    return "Жоғары" if m >= 10 else ("Орташа" if m > 0 else "Төмен")
-
-noise = []
-for i, (n, a, la, lo, d) in enumerate(noise_raw):
-    day, night = noise_edit.loc[i, "Күндіз"], noise_edit.loc[i, "Түнде"]
-    lvl = noise_level(day, night)
-    extra = ""
-    if lvl != "Өлшеу жоқ":
-        extra = f" Өлшем: күндіз {day if pd.notna(day) else '—'}, түнде {night if pd.notna(night) else '—'} дБА."
-    noise.append({
-        "name": n, "area": a, "lat": la, "lon": lo, "risk_type": "Шу", "risk_level": lvl,
-        "description": d + extra,
-        "source": "Нысан орны: Google Places. Шу деңгейі: пайдаланушы өлшемі.",
-        "coord_note": "Координата нысан мекенжайы бойынша.",
-    })
-
-df = pd.DataFrame(air + water + noise)
-
-LEVELS = ["Жоғары", "Орташа", "Төмен", "Өлшеу жоқ"]
-RISK_COLORS = {"Жоғары": "red", "Орташа": "orange", "Төмен": "green", "Өлшеу жоқ": "gray"}
-RISK_TYPE_ICONS = {"Ауа": "cloud", "Су": "tint", "Шу": "volume-up"}
-RISK_LEVEL_BADGE = {"Жоғары": "#e74c3c", "Орташа": "#f39c12", "Төмен": "#27ae60", "Өлшеу жоқ": "#7f8c8d"}
-RISK_COLOR_PLOTLY = {"Жоғары": "#e74c3c", "Орташа": "#f1c40f", "Төмен": "#27ae60", "Өлшеу жоқ": "#95a5a6"}
+selected_risk_types = st.sidebar.multiselect(
+    "⚙️ Ластану түрі:", options=list(df["risk_type"].unique()), default=list(df["risk_type"].unique())
+)
+selected_risk_levels = st.sidebar.multiselect(
+    "🚦 Қауіп деңгейі:", options=["Жоғары", "Орташа", "Төмен"], default=["Жоғары", "Орташа", "Төмен"]
+)
+selected_areas = st.sidebar.multiselect(
+    "📍 Аймақ:", options=list(df["area"].unique()), default=list(df["area"].unique())
+)
+selected_evidence = st.sidebar.multiselect(
+    "📚 Дәлел деңгейі:", options=["A", "B", "C"], default=["A", "B", "C"],
+    help="A — ең күшті дәлел. C — тек сектор деңгейіндегі дерек."
+)
 
 st.sidebar.markdown("---")
-selected_risk_types = st.sidebar.multiselect(
-    "⚙️ Қауіп түрі:", options=["Ауа", "Су", "Шу"], default=["Ауа", "Су", "Шу"])
-selected_risk_levels = st.sidebar.multiselect(
-    "🚦 Қауіп деңгейі:", options=LEVELS, default=LEVELS)
-selected_areas = st.sidebar.multiselect(
-    "📍 Қала / аудан:", options=sorted(df["area"].unique()), default=list(df["area"].unique()))
 show_heatmap = st.sidebar.checkbox("🔥 Жылу картасын қосу", value=False)
 
 filtered_df = df[
     df["risk_type"].isin(selected_risk_types)
     & df["risk_level"].isin(selected_risk_levels)
     & df["area"].isin(selected_areas)
+    & df["evidence"].isin(selected_evidence)
 ]
 
 # ---------------------------------------------------------------------
 # 4. НЕГІЗГІ БЕТ
 # ---------------------------------------------------------------------
-st.title("🌍 Қарағанды өңірінің экологиялық қауіп-қатерлерінің цифрлық картасы")
+st.title("🌍 Қарағанды қаласы мен өңірінің дәлелденген ластану нысандары")
 st.markdown(
-    "Картада **15 нысан** бар: 5 ауа, 5 су, 5 шу. Ауа мен су нысандарының деңгейі "
-    "**Қазгидромет РМК ресми бюллетенінің** деректеріне негізделген (2026 жылғы ақпан). "
-    "Шу бойынша ресми жариялы өлшем жоқ, сондықтан деңгей тек сіз енгізген өлшем бойынша есептеледі."
+    "Әр нысан үшін **дереккөз** (ғылыми мақала, ресми құжат, халықаралық есеп немесе энциклопедия) көрсетілген. "
+    "Нысандар Қарағанды қаласында және оның индустриялық өңірінде (Теміртау, Саран, Шахтинск, Топар) орналасқан."
 )
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Жалпы нысандар", len(df))
 c2.metric("Сүзгідегі нысандар", len(filtered_df))
-c3.metric("Жоғары қауіп", int((filtered_df["risk_level"] == "Жоғары").sum()))
-c4.metric("Өлшеу жоқ (шу)", int((filtered_df["risk_level"] == "Өлшеу жоқ").sum()))
+c3.metric("Жоғары қауіп", len(filtered_df[filtered_df["risk_level"] == "Жоғары"]))
+c4.metric("Тікелей дәлелі бар (A)", len(filtered_df[filtered_df["evidence"] == "A"]))
+
+with st.expander("ℹ️ Қауіп деңгейі мен дәлел деңгейі қалай анықталды?"):
+    st.markdown(
+        "**Қауіп деңгейі**\n"
+        "- **Жоғары** — өлшенген шектен асу немесе ресми құжатта басым үлес көрсетілген\n"
+        "- **Орташа** — ластау көзі расталған, бірақ сандық асу көрсетілмеген\n"
+        "- **Төмен** — іздері анықталған, шектен асу көрсетілмеген\n\n"
+        "**Дәлел деңгейі**\n"
+        f"- {EVIDENCE_TEXT['A']}\n- {EVIDENCE_TEXT['B']}\n- {EVIDENCE_TEXT['C']}\n\n"
+        "Қауіп деңгейі — осы өлшемдер бойынша авторлық жіктеу, ресми рейтинг емес."
+    )
 
 st.markdown("---")
 
 # ---------------------------------------------------------------------
 # 5. КАРТА
 # ---------------------------------------------------------------------
-st.subheader("🗺️ 1. Экологиялық қауіп-қатерлердің картасы")
+st.subheader("🗺️ 1. Ластану нысандарының картасы")
 
-m = folium.Map(location=KARAGANDY_CENTER, zoom_start=START_ZOOM, tiles="OpenStreetMap")
+m = folium.Map(location=MAP_CENTER, zoom_start=START_ZOOM, tiles="OpenStreetMap")
+markers_layer = folium.FeatureGroup(name="Ластану нысандары")
 
 for _, row in filtered_df.iterrows():
-    badge = RISK_LEVEL_BADGE[row["risk_level"]]
+    color = RISK_COLORS[row["risk_level"]]
+    icon_name = RISK_TYPE_ICONS[row["risk_type"]]
+    badge_color = RISK_LEVEL_BADGE[row["risk_level"]]
+    src_html = "".join(
+        f'<li><a href="{s["u"]}" target="_blank" rel="noopener">{s["t"]}</a></li>' for s in row["sources"]
+    )
+
     popup_html = f"""
-    <div style="font-family: Arial, sans-serif; width: 280px;">
+    <div style="font-family: Arial, sans-serif; width: 300px; max-height: 340px; overflow-y:auto;">
         <h4 style="margin-bottom:4px; color:#2c3e50;">{row['name']}</h4>
-        <p style="margin:2px 0; color:#7f8c8d;"><b>Аудан:</b> {row['area']}</p>
+        <p style="margin:2px 0; color:#7f8c8d;"><b>Аймақ:</b> {row['area']}</p>
         <p style="margin:2px 0;"><b>Түрі:</b> {row['risk_type']}</p>
-        <p style="margin:6px 0;"><span style="background-color:{badge}; color:white; padding:3px 10px;
-            border-radius:12px; font-size:12px; font-weight:bold;">Деңгей: {row['risk_level']}</span></p>
+        <p style="margin:6px 0;">
+            <span style="background-color:{badge_color}; color:white; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:bold;">
+                Қауіп деңгейі: {row['risk_level']}
+            </span>
+        </p>
+        <p style="margin:2px 0; font-size:11px; color:#555;"><b>Дәлел:</b> {EVIDENCE_TEXT[row['evidence']]}</p>
         <hr style="margin:6px 0;">
         <p style="margin:2px 0; font-size:12px; color:#34495e;">{row['description']}</p>
-        <p style="margin:6px 0 2px 0; font-size:11px; color:#7f8c8d;"><b>Дереккөз:</b> {row['source']}</p>
-        <p style="margin:2px 0; font-size:11px; color:#95a5a6;">{row['coord_note']}</p>
+        <p style="margin:6px 0 2px 0; font-size:11px; color:#7f8c8d;"><i>Координата: {row['coord_note']}</i></p>
+        <p style="margin:6px 0 2px 0; font-size:12px;"><b>Дереккөздер:</b></p>
+        <ul style="margin:0; padding-left:16px; font-size:11px;">{src_html}</ul>
     </div>
     """
+
     folium.Marker(
         location=[row["lat"], row["lon"]],
-        popup=folium.Popup(popup_html, max_width=320),
+        popup=folium.Popup(popup_html, max_width=340),
         tooltip=row["name"],
-        icon=folium.Icon(color=RISK_COLORS[row["risk_level"]], icon=RISK_TYPE_ICONS[row["risk_type"]], prefix="fa"),
-    ).add_to(m)
+        icon=folium.Icon(color=color, icon=icon_name, prefix="fa"),
+    ).add_to(markers_layer)
 
-if show_heatmap:
-    weight = {"Жоғары": 1.0, "Орташа": 0.6, "Төмен": 0.3}
-    pts = [[r["lat"], r["lon"], weight[r["risk_level"]]]
-           for _, r in filtered_df.iterrows() if r["risk_level"] in weight]
-    if pts:
-        HeatMap(pts, radius=25, blur=20, min_opacity=0.4).add_to(m)
+markers_layer.add_to(m)
+
+if show_heatmap and not filtered_df.empty:
+    weight_map = {"Жоғары": 1.0, "Орташа": 0.6, "Төмен": 0.3}
+    heat_points = [[r["lat"], r["lon"], weight_map[r["risk_level"]]] for _, r in filtered_df.iterrows()]
+    HeatMap(heat_points, radius=25, blur=20, min_opacity=0.4).add_to(m)
 
 st_folium(m, width=1200, height=600, returned_objects=[])
 
-with st.expander("📋 Толық деректер кестесі"):
-    st.dataframe(
-        filtered_df[["name", "area", "risk_type", "risk_level", "description", "source"]].rename(
-            columns={"name": "Атауы", "area": "Аудан", "risk_type": "Түрі", "risk_level": "Деңгей",
-                     "description": "Көрсеткіштер", "source": "Дереккөз"}),
-        use_container_width=True, hide_index=True)
-
-st.markdown("---")
-
 # ---------------------------------------------------------------------
-# 6. ДИАГРАММАЛАР
+# 6. КЕСТЕ ЖӘНЕ ДЕРЕККӨЗДЕР
 # ---------------------------------------------------------------------
-st.subheader("📊 2. Статистика")
+st.subheader("📋 2. Нысандар және дереккөздер")
 
 if filtered_df.empty:
     st.warning("Сүзгіге сәйкес деректер табылмады.")
 else:
-    left, right = st.columns(2)
-    with left:
-        st.markdown("**Түрлер бойынша деңгейлердің үлестірілуі**")
+    table_df = filtered_df[["name", "area", "risk_type", "risk_level", "evidence"]].rename(
+        columns={"name": "Атауы", "area": "Аймақ", "risk_type": "Түрі",
+                 "risk_level": "Қауіп деңгейі", "evidence": "Дәлел деңгейі"}
+    )
+    st.dataframe(table_df, use_container_width=True, hide_index=True)
+
+    for _, row in filtered_df.iterrows():
+        with st.expander(f"📎 {row['name']} — дереккөздер"):
+            st.markdown(f"**Сипаттама:** {row['description']}")
+            st.caption(f"Координата: {row['lat']}, {row['lon']} — {row['coord_note']}")
+            for s in row["sources"]:
+                st.markdown(f"- [{s['t']}]({s['u']})")
+
+st.markdown("---")
+
+# ---------------------------------------------------------------------
+# 7. ДИАГРАММАЛАР
+# ---------------------------------------------------------------------
+st.subheader("📊 3. Статистика")
+
+if not filtered_df.empty:
+    col_left, col_right = st.columns(2)
+
+    with col_left:
+        st.markdown("**Ластану түрі бойынша қауіп деңгейлері**")
         fig_bar = px.histogram(
             filtered_df, x="risk_type", color="risk_level", barmode="group",
-            category_orders={"risk_type": ["Ауа", "Су", "Шу"], "risk_level": LEVELS},
+            category_orders={"risk_type": ["Ауа", "Су"], "risk_level": ["Жоғары", "Орташа", "Төмен"]},
             color_discrete_map=RISK_COLOR_PLOTLY,
-            labels={"risk_type": "Түрі", "risk_level": "Деңгей"})
+            labels={"risk_type": "Ластану түрі", "risk_level": "Қауіп деңгейі"},
+        )
         fig_bar.update_layout(template="plotly_white", yaxis_title="Саны", margin=dict(t=20, b=20, l=10, r=10))
         st.plotly_chart(fig_bar, use_container_width=True)
-    with right:
-        st.markdown("**Қала / аудандар бойынша нысандар үлесі**")
-        ac = filtered_df["area"].value_counts().reset_index()
-        ac.columns = ["area", "count"]
-        fig_pie = px.pie(ac, names="area", values="count", hole=0.3,
+
+    with col_right:
+        st.markdown("**Аймақтар бойынша нысандар үлесі**")
+        area_counts = filtered_df["area"].value_counts().reset_index()
+        area_counts.columns = ["area", "count"]
+        fig_pie = px.pie(area_counts, names="area", values="count", hole=0.3,
                          color_discrete_sequence=px.colors.sequential.RdBu)
         fig_pie.update_traces(textposition="inside", textinfo="percent+label")
         fig_pie.update_layout(template="plotly_white", margin=dict(t=20, b=20, l=10, r=10))
         st.plotly_chart(fig_pie, use_container_width=True)
 
 st.markdown("---")
-st.caption(
-    "Дереккөз: РМК «Қазгидромет» филиалы (Қарағанды және Ұлытау облыстары), ақпараттық бюллетень, "
-    "2026 жылғы ақпан. Деректер бір айға ғана жатады. Қорғау алдында соңғы бюллетеньмен жаңартыңыз."
-)
+st.caption("© Республикалық ғылыми жобалар конкурсы.")
