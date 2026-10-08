@@ -27,7 +27,7 @@ BURT = {"t": "Буртовая Е.В., Баранова Е.И. (2024): Анал�
 eco_data = [
     # ------------------------- АУА -------------------------
     {"name": "Qarmet (бұр. ArcelorMittal Temirtau) металлургия комбинатi", "area": "Теміртау",
-     "lat": 50.031766, "lon": 72.994863, "risk_type": "Ауа", "risk_level": "Жоғары", "evidence": "A",
+     "lat": 50.031766, "lon": 72.994863, "risk_type": "Ауа", "risk_level": "Жоғары",
      "description": "2020 ж. Теміртаудағы шығарындының 242 мың тоннасының 89%-ы осы кәсіпорынға тиесілі. 2018 ж. қаңтарда қала үстіне қара қар жауды. ESA спутник деректері бойынша Теміртауда NO₂ деңгейі ұқсас қалалардан 2–3 есе жоғары.",
      "coord_note": "GEM Global Iron and Steel Tracker (нақты координата)",
      "sources": [
@@ -39,7 +39,7 @@ eco_data = [
          {"t": "GEM: Qarmet steel plant (координата)", "u": "https://www.gem.wiki/Qarmet_steel_plant"},
      ]},
     {"name": "Қарағанды ЖЭО-3 (ТЭЦ-3) және күл үйіндісі", "area": "Қарағанды қаласы",
-     "lat": 49.916732, "lon": 73.237172, "risk_type": "Ауа", "risk_level": "Жоғары", "evidence": "A",
+     "lat": 49.916732, "lon": 73.237172, "risk_type": "Ауа", "risk_level": "Жоғары",
      "description": "Қаланың ең ірі көмірмен жұмыс істейтін электр станциясы. 2021 ж. көмір шаңының рұқсат етілген деңгейінен асқаны үшін 1,7 млн теңге айыппұл салынған. Қар түсірілімі зерттеуі стансадан таралған жанбаған көмір мен күл бөлшектерін анықтады; станса маңы топырағында қорғасын 1,1 ШРК.",
      "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
      "sources": [
@@ -49,54 +49,54 @@ eco_data = [
          BURT,
      ]},
     {"name": "Қарағанды ЖЭО-2 (Qarmet ТЭЦ-2)", "area": "Теміртау",
-     "lat": 50.04667, "lon": 73.053235, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "B",
+     "lat": 50.04667, "lon": 73.053235, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "Qarmet-тің өз қажетіне арналған көмірмен жұмыс істейтін жылу электр орталығы (≥435 МВт), Global Coal Plant Tracker тізімінде.",
      "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
      "sources": [{"t": "GEM: Karaganda-2 power station", "u": "https://www.gem.wiki/Karaganda-2_power_station"}]},
     {"name": "Қарағанды ГРЭС-1 (Теміртау)", "area": "Теміртау",
-     "lat": 50.089267, "lon": 72.918005, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "B",
+     "lat": 50.089267, "lon": 72.918005, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "1942 жылдан жұмыс істейтін көмір станциясы (84 МВт). 2023 ж. мамырда тұрғындар күл үйіндісінен күл бұлттары таралатынына шағымданды, мәселе бойынша тексеру жарияланды.",
      "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
      "sources": [{"t": "GEM: Karaganda-1 power station", "u": "https://www.gem.wiki/Karaganda-1_power_station"}]},
     {"name": "Топар ГРЭС-2 (Қарағанды ГРЭС-2)", "area": "Қарағанды облысы",
-     "lat": 49.51333, "lon": 72.79861, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "B",
+     "lat": 49.51333, "lon": 72.79861, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "Көмірмен жұмыс істейтін ірі станса (мың МВт-қа жуық). GEM күл үйіндісінен шаң көтерілуі туралы хабарламалар мен бейнематериалдар бар екенін көрсетеді.",
      "coord_note": "GEM Global Coal Plant Tracker (нақты координата)",
      "sources": [{"t": "GEM: Topar power station", "u": "https://www.gem.wiki/Topar_power_station"}]},
     {"name": "Костенко шахтасы", "area": "Қарағанды қаласы",
-     "lat": 49.859567, "lon": 73.113928, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "lat": 49.859567, "lon": 73.113928, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "Қарағанды қаласы шегіндегі жерасты көмір шахтасы. EEAS/ESA есебі: жерасты көмір өндіру ашық тәсілден гөрі көбірек метан (CH₄) бөледі; Қарағанды — шахталық ластану басым өңірлердің бірі.",
      "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
      "sources": [{"t": "GEM: Kostenko Coal Mine", "u": "https://www.gem.wiki/Kostenko_Coal_Mine"}, EEAS]},
     {"name": "Кузембаев шахтасы", "area": "Қарағанды облысы",
-     "lat": 49.805879, "lon": 72.966106, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "lat": 49.805879, "lon": 72.966106, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "Жерасты көмір шахтасы, шығыс бөлігі Қарағанды қаласымен шектеседі. Метан шығарындысының секторлық көзі (EEAS/ESA).",
      "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
      "sources": [{"t": "GEM: Kuzembaev Coal Mine", "u": "https://www.gem.wiki/Kuzembaev_Coal_Mine"}, EEAS]},
     {"name": "Саран шахтасы", "area": "Қарағанды облысы",
-     "lat": 49.773061, "lon": 72.895188, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "lat": 49.773061, "lon": 72.895188, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "Қарағанды қаласынан шамамен 12 км қашықтықтағы жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
      "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
      "sources": [{"t": "GEM: Saranskaya Coal Mine", "u": "https://www.gem.wiki/Saranskaya_Coal_Mine"}, EEAS]},
     {"name": "Абай шахтасы", "area": "Қарағанды облысы",
-     "lat": 49.68629, "lon": 72.75919, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "lat": 49.68629, "lon": 72.75919, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "2021 ж. қарашада метан жарылысы болған жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
      "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
      "sources": [{"t": "GEM: Abayskaya Coal Mine", "u": "https://www.gem.wiki/Abayskaya_coal_mine"}, EEAS]},
     {"name": "Ленин атындағы шахта (Шахтинск)", "area": "Қарағанды облысы",
-     "lat": 49.725506, "lon": 72.521954, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "lat": 49.725506, "lon": 72.521954, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "2006 және 2022 жж. метан жарылыстары болған жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
      "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
      "sources": [{"t": "GEM: Lenin (Kazakhstan) Coal Mine", "u": "https://www.gem.wiki/V._I._Lenin_(Kazakhstan)_Coal_Mine"}, EEAS]},
     {"name": "Шахтинская шахтасы (Шахтинск)", "area": "Қарағанды облысы",
-     "lat": 49.764274, "lon": 72.617826, "risk_type": "Ауа", "risk_level": "Орташа", "evidence": "C",
+     "lat": 49.764274, "lon": 72.617826, "risk_type": "Ауа", "risk_level": "Орташа",
      "description": "Қарағанды көмір бассейнінің жерасты шахтасы. Метан шығарындысының секторлық көзі (EEAS/ESA).",
      "coord_note": "GEM Global Coal Mine Tracker (нақты координата)",
      "sources": [{"t": "GEM: Shakhtinskaya Coal Mine", "u": "https://www.gem.wiki/Shakhtinskaya_Coal_Mine"}, EEAS]},
 
     # ------------------------- СУ -------------------------
     {"name": "Нұра өзені — Теміртау учаскесі (сынап, «Карбид» зауыты)", "area": "Теміртау",
-     "lat": 50.10472, "lon": 72.91889, "risk_type": "Су", "risk_level": "Жоғары", "evidence": "A",
+     "lat": 50.10472, "lon": 72.91889, "risk_type": "Су", "risk_level": "Жоғары",
      "description": "1972 жылдан «Карбид» ацетальдегид зауыты өзенге сынап төкті (1997 ж. жабылды). Зерттеулерде өзен суындағы еритін сынап ШРК-дан 20 есе, Теміртау топырағында 30 есе асқан. Теміртау–Интумак аралығындағы шөгінділерде ~9,4 т сынап бағаланған; жоғарғы 25 км-де орташа 150–240 мг/кг. Дүниежүзілік банк жобасы (2011 ж. аяқталды) ластанған топырақты жойды; Arnika 2013–2014 жж. қалдық ластануды зерттеген.",
      "coord_note": "Анықтамалық нүкте: Самарқан бөгені бөгеті, Нұра өзенінің Теміртау тұсы (Wikipedia). Ластанған учаске осы жерден төменге қарай ~25 км.",
      "sources": [
@@ -111,12 +111,12 @@ eco_data = [
          {"t": "Arnika: Mercury contamination of Nura river", "u": "https://arnika.org/en/hotspots/kazakhstan/mercury-contamination-of-nura-river"},
      ]},
     {"name": "Сокыр өзені", "area": "Қарағанды облысы",
-     "lat": 49.88167, "lon": 72.56778, "risk_type": "Су", "risk_level": "Жоғары", "evidence": "A",
+     "lat": 49.88167, "lon": 72.56778, "risk_type": "Су", "risk_level": "Жоғары",
      "description": "Қазгидромет деректері бойынша 2021–2022 жж. су сапасы «нормаланбайды (>5 класс)»: 2022 ж. жалпы темір 0,358 және марганец 0,187 мг/дм³. Өзен Қарағанды қаласының оңтүстік шетінен өтеді, суы ішуге жарамсыз.",
      "coord_note": "Өзен сағасы (Шерубайнұрамен құятын жер), Wikipedia координатасы.",
      "sources": [BURT, {"t": "Wikipedia: Sokyr", "u": "https://en.wikipedia.org/wiki/Sokyr"}]},
     {"name": "Фёдоров су қоймасы және Кіші Бұқпа өзені (кәріз ағыны)", "area": "Қарағанды қаласы",
-     "lat": 49.7583, "lon": 73.0908, "risk_type": "Су", "risk_level": "Орташа", "evidence": "A",
+     "lat": 49.7583, "lon": 73.0908, "risk_type": "Су", "risk_level": "Орташа",
      "description": "Қаладағы кәріздің 70%-ын өткізетін коллекторда болған апат салдарынан тазартылмаған ағын сулар Кіші Бұқпаға құйылды, ал өзен Фёдоров су қоймасына барады. Санэпидемиологтар өзен суында кәріздің бар екенін зертханалық түрде растады; су қоймасына жетуі туралы нәтижелер бөлек тексерілуде.",
      "coord_note": "Wikipedia (RuWiki): 49°45′30″ с.е., 73°05′27″ ш.б.",
      "sources": [
@@ -128,7 +128,7 @@ eco_data = [
          {"t": "Wikipedia: Sokyr (су қоймасының сипаты)", "u": "https://en.wikipedia.org/wiki/Sokyr"},
      ]},
     {"name": "Ертіс–Қарағанды каналы (Нұра өзенімен қиылысу)", "area": "Қарағанды облысы",
-     "lat": 50.09056, "lon": 73.37778, "risk_type": "Су", "risk_level": "Төмен", "evidence": "A",
+     "lat": 50.09056, "lon": 73.37778, "risk_type": "Су", "risk_level": "Төмен",
      "description": "Қарағанды қаласының негізгі ауыз су көзі. Балық сынамаларында қорғасын (0,081 мг/кг дейін) барлық сынамада анықталған; шектен асу көрсетілмеген. Қазгидромет бойынша канал суы 2022 ж. 4-сыныптан 3-класқа жақсарды.",
      "coord_note": "Wikipedia: канал мен Нұраның қиылысу нүктесі.",
      "sources": [
@@ -141,12 +141,6 @@ eco_data = [
 
 df = pd.DataFrame(eco_data)
 assert len(df) == 15
-
-EVIDENCE_TEXT = {
-    "A": "A — рецензияланған мақала / ресми құжат / халықаралық есеп",
-    "B": "B — халықаралық дерекқор / энциклопедия",
-    "C": "C — сектор деңгейіндегі дерек",
-}
 
 RISK_COLORS = {"Жоғары": "red", "Орташа": "orange", "Төмен": "green"}
 RISK_TYPE_ICONS = {"Ауа": "cloud", "Су": "tint"}
@@ -168,10 +162,6 @@ selected_risk_levels = st.sidebar.multiselect(
 selected_areas = st.sidebar.multiselect(
     "Аймақ:", options=list(df["area"].unique()), default=list(df["area"].unique())
 )
-selected_evidence = st.sidebar.multiselect(
-    "Дәлел деңгейі:", options=["A", "B", "C"], default=["A", "B", "C"],
-    help="A — ең күшті дәлел. C — тек сектор деңгейіндегі дерек."
-)
 
 st.sidebar.markdown("---")
 show_heatmap = st.sidebar.checkbox("Жылу картасын қосу", value=False)
@@ -180,7 +170,6 @@ filtered_df = df[
     df["risk_type"].isin(selected_risk_types)
     & df["risk_level"].isin(selected_risk_levels)
     & df["area"].isin(selected_areas)
-    & df["evidence"].isin(selected_evidence)
 ]
 
 # ---------------------------------------------------------------------
@@ -192,20 +181,17 @@ st.markdown(
     "Нысандар Қарағанды қаласында және оның индустриялық өңірінде (Теміртау, Саран, Шахтинск, Топар) орналасқан."
 )
 
-c1, c2, c3, c4 = st.columns(4)
+c1, c2, c3 = st.columns(3)
 c1.metric("Жалпы нысандар", len(df))
 c2.metric("Сүзгідегі нысандар", len(filtered_df))
 c3.metric("Жоғары қауіп", len(filtered_df[filtered_df["risk_level"] == "Жоғары"]))
-c4.metric("Тікелей дәлелі бар (A)", len(filtered_df[filtered_df["evidence"] == "A"]))
 
-with st.expander("Қауіп деңгейі мен дәлел деңгейі қалай анықталды?"):
+with st.expander("Қауіп деңгейі қалай анықталды?"):
     st.markdown(
         "**Қауіп деңгейі**\n"
         "- **Жоғары** — өлшенген шектен асу немесе ресми құжатта басым үлес көрсетілген\n"
         "- **Орташа** — ластау көзі расталған, бірақ сандық асу көрсетілмеген\n"
         "- **Төмен** — іздері анықталған, шектен асу көрсетілмеген\n\n"
-        "**Дәлел деңгейі**\n"
-        f"- {EVIDENCE_TEXT['A']}\n- {EVIDENCE_TEXT['B']}\n- {EVIDENCE_TEXT['C']}\n\n"
         "Қауіп деңгейі — осы өлшемдер бойынша авторлық жіктеу, ресми рейтинг емес."
     )
 
@@ -237,7 +223,6 @@ for _, row in filtered_df.iterrows():
                 Қауіп деңгейі: {row['risk_level']}
             </span>
         </p>
-        <p style="margin:2px 0; font-size:11px; color:#555;"><b>Дәлел:</b> {EVIDENCE_TEXT[row['evidence']]}</p>
         <hr style="margin:6px 0;">
         <p style="margin:2px 0; font-size:12px; color:#34495e;">{row['description']}</p>
         <p style="margin:6px 0 2px 0; font-size:11px; color:#7f8c8d;"><i>Координата: {row['coord_note']}</i></p>
@@ -270,9 +255,9 @@ st.subheader("2. Нысандар және дереккөздер")
 if filtered_df.empty:
     st.warning("Сүзгіге сәйкес деректер табылмады.")
 else:
-    table_df = filtered_df[["name", "area", "risk_type", "risk_level", "evidence"]].rename(
+    table_df = filtered_df[["name", "area", "risk_type", "risk_level"]].rename(
         columns={"name": "Атауы", "area": "Аймақ", "risk_type": "Түрі",
-                 "risk_level": "Қауіп деңгейі", "evidence": "Дәлел деңгейі"}
+                 "risk_level": "Қауіп деңгейі"}
     )
     st.dataframe(table_df, use_container_width=True, hide_index=True)
 
@@ -315,4 +300,4 @@ if not filtered_df.empty:
         st.plotly_chart(fig_pie, use_container_width=True)
 
 st.markdown("---")
-st.caption("© Республикалық ғылыми жобалар конкурсы. Дереккөздер 2026 ж. қазанда тексерілген.")
+st.caption("© Республикалық ғылыми жобалар конкурсы.")
